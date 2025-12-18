@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decathlon AI Sport Leader</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 20px; background: #0082c3; color: #333; display: flex; justify-content: center; }
+        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 100%; max-width: 400px; }
+        h2 { color: #0082c3; text-align: center; margin-bottom: 25px; }
+        .question { margin-bottom: 20px; }
+        .options { display: flex; gap: 8px; flex-wrap: wrap; }
+        button { padding: 12px 18px; border: 2px solid #eee; border-radius: 25px; background: white; cursor: pointer; transition: 0.3s; font-size: 14px; }
+        button.active { background: #0082c3; color: white; border-color: #0082c3; }
+        #submit-btn { width: 100%; background: #ffb400; color: #000; border: none; padding: 15px; border-radius: 15px; font-weight: bold; font-size: 16px; margin-top: 10px; cursor: pointer; }
+        #result { margin-top: 25px; display: none; border-top: 2px solid #eee; padding-top: 20px; }
+        .price { font-size: 24px; color: #e4002b; font-weight: bold; margin: 10px 0; }
+        .feature-tag { display: inline-block; background: #eef9ff; padding: 5px 10px; border-radius: 5px; font-size: 12px; margin-right: 5px; color: #005682; border: 1px solid #d0e8f7; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>🏔️ AI Sport Leader</h2>
+        <div id="quiz">
+            <div class="question">
+                <p><strong>1. What is the terrain?</strong></p>
+                <div class="options" data-key="terrain">
+                    <button onclick="sel(this, 'rocky')">Rocky / Uneven</button>
+                    <button onclick="sel(this, 'flat')">Flat Trails</button>
+                </div>
+            </div>
+            <div class="question">
+                <p><strong>2. Weather forecast?</strong></p>
+                <div class="options" data-key="weather">
+                    <button onclick="sel(this, 'rain')">Rainy / Wet</button>
+                    <button onclick="sel(this, 'dry')">Dry / Sunny</button>
+                </div>
+            </div>
+            <div class="question">
+                <p><strong>3. Trip duration?</strong></p>
+                <div class="options" data-key="time">
+                    <button onclick="sel(this, 'long')">Over 3 Hours</button>
+                    <button onclick="sel(this, 'short')">Short Hike</button>
+                </div>
+            </div>
+            <div class="question">
+                <p><strong>4. Your preference?</strong></p>
+                <div class="options" data-key="style">
+                    <button onclick="sel(this, 'mid')">Ankle Support (Mid)</button>
+                    <button onclick="sel(this, 'low')">Flexible (Low)</button>
+                </div>
+            </div>
+            <button id="submit-btn" onclick="analyze()">Get Recommendation</button>
+        </div>
+
+        <div id="result">
+            <p style="color:#666; font-size:14px; margin-bottom:5px;">Recommended for you:</p>
+            <h3 id="res-name" style="margin:0;"></h3>
+            <div class="price" id="res-price"></div>
+            <div id="res-tags"></div>
+            <p id="res-reason" style="font-size:14px; line-height:1.5; margin-top: 15px;"></p>
+            <button onclick="location.reload()" style="width:100%; background:#eee; border:none; padding:10px; border-radius:10px; margin-top:15px; cursor:pointer;">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        let config = {};
+        function sel(btn, val) {
+            const parent = btn.parentElement;
+            parent.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            config[parent.getAttribute('data-key')] = val;
+        }
+
+        function analyze() {
+            if(Object.keys(config).length < 4) return alert('Please complete all selections!');
+            let res = {};
+            
+            // Logic based on your provided data chart
+            if (config.terrain === 'rocky' || config.time === 'long') {
+                res = { 
+                    name: "MH500 MID WTP", 
+                    price: "$699", 
+                    reason: "Best for rugged terrain and long challenges. Offers 8H top-tier waterproofing and 5mm deep-lug grip for maximum safety.", 
+                    tags: ["8H Waterproof", "5mm Studs", "Thick EVA Cushioning"] 
+                };
+            } else if (config.weather === 'rain') {
+                res = { 
+                    name: "MH100 MID WTP", 
+                    price: "$449", 
+                    reason: "Provides reliable 3H waterproofing and essential ankle support, perfect for short rainy excursions.", 
+                    tags: ["3H Waterproof", "4mm Studs", "Ankle Protection"] 
+                };
+            } else {
+                res = { 
+                    name: "FH500", 
+                    price: "$499", 
+                    reason: "Ideal for fast hiking in dry weather. The lightweight design ensures maximum agility on every step.", 
+                    tags: ["Non-waterproof", "Excellent Grip", "Lightweight"] 
+                };
+            }
+            
+            document.getElementById('quiz').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('res-name').innerText = res.name;
+            document.getElementById('res-price').innerText = res.price;
+            document.getElementById('res-reason').innerText = res.reason;
+            let tagHtml = '';
+            res.tags.forEach(t => tagHtml += `<span class="feature-tag">${t}</span>`);
+            document.getElementById('res-tags').innerHTML = tagHtml;
+        }
+    </script>
+</body>
+</html>
